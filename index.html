@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Identity Portal | Software Solution House</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Exact Brand Colors from Software Solution House */
+            --brand-navy: #0f1c2e; 
+            --brand-teal: #2db8b1; 
+            --brand-white: #ffffff;
+            --bg-dark: #070d17;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(45, 184, 177, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(15, 28, 46, 0.4) 0px, transparent 50%);
+            color: var(--brand-white);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Nav Header */
+        nav {
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(7, 13, 23, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-container img {
+            height: 50px; /* Adjust based on logo proportions */
+            display: block;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+            flex: 1;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-section h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #fff, var(--brand-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        /* Search Module */
+        .main-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+        }
+
+        .selector-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 35px;
+        }
+
+        .btn-mode {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: #94a3b8;
+            padding: 12px 28px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-mode.active {
+            background: var(--brand-teal);
+            color: var(--brand-navy);
+            border-color: var(--brand-teal);
+            box-shadow: 0 0 20px rgba(45, 184, 177, 0.4);
+        }
+
+        .input-area {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid var(--border);
+            padding: 22px;
+            border-radius: 20px;
+            color: white;
+            font-size: 1.6rem;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: var(--brand-teal);
+            background: rgba(0,0,0,0.5);
+            box-shadow: 0 0 0 4px rgba(45, 184, 177, 0.1);
+        }
+
+        #searchBtn {
+            width: 100%;
+            margin-top: 20px;
+            background: var(--brand-teal);
+            color: var(--brand-navy);
+            border: none;
+            padding: 20px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #searchBtn:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.1);
+            box-shadow: 0 10px 30px rgba(45, 184, 177, 0.3);
+        }
+
+        /* Result Cards */
+        #results-container {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .data-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--brand-teal);
+        }
+
+        .data-card:hover {
+            background: rgba(255,255,255,0.04);
+            transform: scale(1.02);
+        }
+
+        .entry { margin-bottom: 18px; }
+        .entry-label { color: var(--brand-teal); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
+        .entry-value { font-size: 1.2rem; font-weight: 500; color: #fff; margin-top: 4px; }
+
+        /* Loader */
+        .loader-bar {
+            height: 3px;
+            width: 0%;
+            background: var(--brand-teal);
+            position: absolute;
+            bottom: 0; left: 0;
+            transition: width 0.3s;
+            box-shadow: 0 0 10px var(--brand-teal);
+        }
+
+        footer {
+            padding: 50px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        footer b { color: var(--brand-teal); }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo-container">
+        <img src="https://logo.softwaresolutionhouse.com/Images/Software-Solution-House.png" alt="Software Solution House">
+    </div>
+    <div style="font-weight: 600; color: var(--brand-teal); font-size: 0.8rem; letter-spacing: 1px;">
+        DATA INTELLIGENCE UNIT
+    </div>
+</nav>
+
+<div class="container">
+    <div class="hero-section">
+        <h1>Identity Verification</h1>
+        <p>Enterprise-grade infrastructure for real-time data verification.</p>
+    </div>
+
+    <div class="main-card">
+        <div class="selector-box">
+            <button class="btn-mode active" data-mode="mobile">Mobile Tracking</button>
+            <button class="btn-mode" data-mode="cnic">CNIC Verification</button>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="0300-0000000" maxlength="12">
+            <button id="searchBtn">Execute Search</button>
+            <div class="loader-bar" id="progress"></div>
+        </div>
+    </div>
+
+    <div id="results-container"></div>
+</div>
+
+<footer>
+    © 2026 <b>Software Solution House</b>. Managed Security & Data Solutions.
+</footer>
+
+<script>
+$(document).ready(function() {
+    let currentMode = 'mobile';
+
+    $('.btn-mode').click(function() {
+        $('.btn-mode').removeClass('active');
+        $(this).addClass('active');
+        currentMode = $(this).data('mode');
+        $('#userInput').val('').focus();
+        $('#userInput').attr('placeholder', currentMode === 'mobile' ? '0300-0000000' : '00000-0000000-0');
+        $('#userInput').attr('maxlength', currentMode === 'mobile' ? '12' : '15');
+    });
+
+    $('#userInput').on('input', function() {
+        let val = $(this).val().replace(/\D/g, '');
+        let formatted = '';
+        if (currentMode === 'mobile') {
+            formatted = (val.length > 4) ? val.substr(0, 4) + '-' + val.substr(4, 7) : val;
+        } else {
+            if (val.length > 5 && val.length <= 12) formatted = val.substr(0, 5) + '-' + val.substr(5, 7);
+            else if (val.length > 12) formatted = val.substr(0, 5) + '-' + val.substr(5, 7) + '-' + val.substr(12, 1);
+            else formatted = val;
+        }
+        $(this).val(formatted);
+    });
+
+    $('#searchBtn').click(function() {
+        const cleanNumber = $('#userInput').val().replace(/-/g, '');
+        const resultsDiv = $('#results-container');
+        if(!cleanNumber) return;
+
+        $('#progress').css('width', '50%');
+        resultsDiv.empty();
+
+        const workerUrl = `https://floral-cell-96ff.muhammad-saqib-ec7.workers.dev/?number=${cleanNumber}`;
+
+        $.ajax({
+            url: workerUrl,
+            method: 'GET',
+            success: function(data) {
+                $('#progress').css('width', '100%');
+                setTimeout(() => $('#progress').css('width', '0%'), 500);
+
+                let results = (typeof data === 'string') ? JSON.parse(data) : data;
+
+                if (!results || results.length === 0 || results[0].Name === "DATA NOT RECIEVED") {
+                    resultsDiv.append('<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">Request Completed: No matching identity records found in secure database.</div>');
+                    return;
+                }
+
+                results.forEach(item => {
+                    resultsDiv.append(`
+                        <div class="data-card">
+                            <div class="entry"><div class="entry-label">Full Legal Name</div><div class="entry-value">${item.Name}</div></div>
+                            <div class="entry"><div class="entry-label">Mobile Subscribed</div><div class="entry-value">${item.Mobile}</div></div>
+                            <div class="entry"><div class="entry-label">C.N.I.C Number</div><div class="entry-value">${item.CNIC}</div></div>
+                            <div class="entry"><div class="entry-label">Primary Address</div><div class="entry-value">${item.ADDRESS}</div></div>
+                        </div>
+                    `);
+                });
+            },
+            error: function() {
+                $('#progress').css('width', '0%');
+                resultsDiv.html('<div style="grid-column: 1/-1; text-align: center; color: #ef4444;">System Error: Gateway Timeout.</div>');
+            }
+        });
+    });
+
+    
+});
+
+
+</script>
+
+</body>
+</html>
